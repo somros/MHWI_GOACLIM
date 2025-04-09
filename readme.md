@@ -20,7 +20,7 @@ The workflow includes:
 ### Software Requirements on loon
 - Access to loon
 - Bash shell environment
-- CDO (Climate Data Operators)
+- CDO ([Climate Data Operators](https://code.mpimet.mpg.de/projects/cdo))
 
 ### Required Data Files
 - ROMS NetCDF output files
@@ -90,13 +90,13 @@ The `process_annual_nc()` function performs the following steps:
 
 ## Usage
 
-### Subsetting Daily Files on loon
+### Subsetting daily files on loon
 ```bash
 # Make sure hind_files.txt contains paths to your ROMS files
-bash extract_surface_temp.sh
+bash pull_sst.sh
 ```
 
-### Creating Annual Files on loon
+### Creating annual files on loon
 ```bash
 bash combine_daily_to_annual.sh
 ```
@@ -111,7 +111,7 @@ daily_sst_ls <- lapply(nc_files, process_annual_nc, maxdepth = 1000)
 
 ## Bias correction with delta method
 
-XXX add when we do proj
+To add when we do projections. What is the spatial and temporal scale at which the correction should occur?
 
 ## Calculate MHWI
 
@@ -123,6 +123,7 @@ XXX
 - The maximum depth parameter can be adjusted to focus on different depth ranges (1000 vs 300 to match our previous approaches)
 - The process handles leap years and partial years correctly
 - A reference index is created to speed up processing when running multiple times
+- The approach takes mean temperatures by NMFS area and then calculates the MHWI. Should it instead calculate the MHWI at grid cell level and then average?
 
 ## Contact
 

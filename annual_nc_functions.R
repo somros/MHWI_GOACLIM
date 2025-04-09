@@ -46,9 +46,6 @@
 #'   labs(title = "Mean temperature by NMFS area", color = "NMFS Area")
 process_annual_nc <- function(ncfile, maxdepth) {
   
-  ncfile <- "annual_1990_new.nc"
-  maxdepth = 1000
-  
   print(paste("Processing file ", ncfile))
   
   # Open netCDF file to process

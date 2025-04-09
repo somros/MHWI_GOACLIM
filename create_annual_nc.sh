@@ -34,13 +34,42 @@ if [ ! -f "$INDEX_DIR/indexed" ]; then
     BASENAME=$(basename $NCFILE)
     echo "Indexing $BASENAME..."
     
-    # Get years in this file
+    # Get years in this file (do this only once to avoid calling cdo multiple times)
     YEARS=$(cdo showtimestamp $NCFILE | grep -o '[0-9]\{4\}' | sort | uniq)
     
+    # Handle files containing "hind03" differently for years 2011-2013
+    # These files contain duplicate records with very low temperatures
+    # We exclude them at the indexing stage because mergetime keeps the first record by default
+    # But we need to be careful with files that straddle years (contain data for multiple years)
+    SKIP_YEARS=""
+    if [[ "$BASENAME" == *"hind03"* ]]; then
+      for YEAR in $YEARS; do
+        if [ $YEAR -ge 2011 ] && [ $YEAR -le 2013 ]; then
+          # Mark this year to be skipped, but don't skip the entire file
+          SKIP_YEARS="$SKIP_YEARS $YEAR"
+          echo "Will exclude $BASENAME from indexing for year $YEAR (contains problematic temperature records)"
+        fi
+      done
+    fi
+    
     # Add this file to the index for each year it contains
+    # But skip specific years for hind03 files that we marked for exclusion
     for YEAR in $YEARS; do
       if [ $YEAR -ge $START_YEAR ] && [ $YEAR -le $END_YEAR ]; then
-        echo "$NCFILE" >> $INDEX_DIR/files_${YEAR}.txt
+        # Check if this year should be skipped for this file
+        SKIP=0
+        for SKIP_YEAR in $SKIP_YEARS; do
+          if [ "$YEAR" -eq "$SKIP_YEAR" ]; then
+            SKIP=1
+            break
+          fi
+        done
+        
+        if [ $SKIP -eq 0 ]; then
+          echo "$NCFILE" >> $INDEX_DIR/files_${YEAR}.txt
+        else
+          echo "Excluding $BASENAME from index for year $YEAR"
+        fi
       fi
     done
   done
@@ -92,7 +121,7 @@ for YEAR in $(seq $START_YEAR $END_YEAR); do
       echo "Duplicate dates logged to $OUTPUT_DIR/duplicates_${YEAR}.log"
     else
       echo "No duplicate dates found in year $YEAR."
-																									  
+                                                                                                                                                                                                          
     fi
     
     # Copy the merged file to output without modifying the time axis

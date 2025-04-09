@@ -2,8 +2,15 @@ library(tidync)
 library(ncdf4)
 library(tidyverse)
 library(sf)
+library(lubridate)
 
 select <- dplyr::select
+
+source("annual_nc_functions.R")
+
+# list netcdf files containing sst
+# hindcast only for now
+nc_files <- list.files(here::here("data","hindcast_sst"))
 
 # open grid 
 # cell lat/lons from ROMS
@@ -38,69 +45,11 @@ mask <- mask %>% filter(NMFS_AREA %in% c(610,620,630,640,650))%>% # subset to 61
   select(NMFS_AREA, AREA)  %>%# area here seems to be in m2
   st_transform(crs = 4326)
 
-# open netcdf file to process
-# this will be part of the function
-tempfile <- here::here('data','hindcast_sst', 'annual_2000.nc')
-temp <- tidync(tempfile)
-temp_vars <- hyper_grids(temp) %>% # all available grids in the ROMS ncdf
-  pluck("grid") %>% # for each grid, pull out all the variables asssociated with that grid and make a reference table
-  purrr::map_df(function(x){
-    temp %>% activate(x) %>% hyper_vars() %>% 
-      mutate(grd=x)
-  })
+# run function over all nc files and save objects into a list
+# this takes time
+daily_sst_ls <- lapply(nc_files, process_annual_nc, maxdepth = 1000)
 
-temp_rhogrd <- temp_vars %>% filter(name=="temp") %>% pluck('grd')
-temp_rho <- temp %>% activate(temp_rhogrd) %>% hyper_tibble(na.rm = F) %>%
-  dplyr::select(xi_rho,eta_rho,temp,ocean_time)
-
-# we need to figure out if the NA values are on land or what else is happening
-# match grid to netcdf files
-temp_rho <- roms_rho %>%
-  full_join(temp_rho, by = c("xi_rho","eta_rho"))
-
-# # at this point there are a lot of NA values for temp
-# # when you plot them, you can actually see that these all correspond to land
-# # so this is the land mask from the ROMS model and these NAs can safely be discarded
-# # check na
-# temp_na <- temp_rho[is.na(temp_rho$temp),]
-# # view
-# temp_na %>%
-#   filter(ocean_time == 1) %>%
-#   ggplot()+
-#   geom_sf()
-
-# drop nas
-temp_rho <- temp_rho %>% drop_na(temp)
-
-# subset to h < 1000
-temp_rho <- temp_rho %>%
-  filter(h <= 1000) # to do: make this an argument for the function, may be 1000 or 300
-
-# view
-# temp_rho %>%
-#   filter(ocean_time == 1) %>%
-#   ggplot()+
-#   geom_sf(aes(color = temp))
-# spatial parsing seems to have worked OK
-
-# clip to nmfs areas mask
-temp_nmfs <- temp_rho %>%
-  st_join(mask) %>%
-  filter(NMFS_AREA %in% c(610,620,630))
-  
-# map
-# temp_nmfs %>%
-#   filter(ocean_time == 1) %>%
-#   ggplot()+
-#   geom_sf(aes(color = NMFS_AREA))
-
-# TODO: we no longer need the spatial information so drop it for simplicity
-# ...
-
-# average by day and nmfs area
-temp_day <- temp_nmfs %>%
-  group_by(ocean_time, NMFS_AREA) %>%
-  summarise(temp = mean(temp))
 
 # save into list
 # merge into one long series across years
+

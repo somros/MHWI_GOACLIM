@@ -46,6 +46,9 @@
 #'   labs(title = "Mean temperature by NMFS area", color = "NMFS Area")
 process_annual_nc <- function(ncfile, maxdepth) {
   
+  ncfile <- "annual_1990_new.nc"
+  maxdepth = 1000
+  
   print(paste("Processing file ", ncfile))
   
   # Open netCDF file to process
@@ -106,12 +109,15 @@ process_annual_nc <- function(ncfile, maxdepth) {
   # Parse the units string to get reference time
   time_parts <- strsplit(time_units, " ")[[1]]
   ref_date_str <- paste(time_parts[3:length(time_parts)], collapse = " ")
-  ref_date <- ymd_hms(ref_date_str)
-  
+
   # Convert the numeric values to dates
   dates <- data.frame("ocean_time" = time_data,
-                      "date" = ref_date + days(time_data))
+                      "date" = as.POSIXct(time_data, origin = ref_date_str, tx = "UTC"))
   
+  # Force the time to be at 12:00:00
+  dates <- dates %>%
+    mutate(date = update(date, hour = 12, minute = 0, second = 0))
+
   # Close the file
   nc_close(nc)
   

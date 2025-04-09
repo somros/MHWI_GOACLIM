@@ -31,7 +31,7 @@ roms_rho <- roms %>% activate(latlon_rhogrd) %>% hyper_tibble() %>%
 
 # subset grid with the same indices as used for the nc files
 roms_rho <- roms_rho %>%
-  filter(between(xi_rho,43,226), between(eta_rho,215,464)) %>%
+  filter(between(xi_rho,43,226), between(eta_rho,215,464)) %>% # make sure you use the same indices as the ROMS data subsetting on loon
   mutate(xi_rho = (xi_rho - min(xi_rho)+1),
          eta_rho = (eta_rho - min(eta_rho)+1))
 
@@ -49,7 +49,10 @@ mask <- mask %>% filter(NMFS_AREA %in% c(610,620,630,640,650))%>% # subset to 61
 # this takes time
 daily_sst_ls <- lapply(nc_files, process_annual_nc, maxdepth = 1000)
 
+# merge into one data frame
+daily_sst <- daily_sst_ls %>% bind_rows()
 
-# save into list
-# merge into one long series across years
+# save as RDS file
+# XXX
 
+# do MHWI processing in a separate script

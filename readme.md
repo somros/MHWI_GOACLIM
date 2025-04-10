@@ -84,8 +84,8 @@ The `process_annual_nc()` function performs the following steps:
 - Extracts temperature data
 - Matches with ROMS grid coordinates
 - Filters out land cells and areas deeper than the specified maximum depth
-- Clips to specified NMFS areas (610, 620, 630)
-- Calculates daily means by NMFS area
+- Clips to specified NMFS areas (610, 620, 630 for Pcod)
+- Calculates daily means by NMFS area (or for the entire area)
 - Converts time steps to calendar dates
 
 ## Usage
@@ -115,7 +115,14 @@ To add when we do projections. What is the spatial and temporal scale at which t
 
 ## Calculate MHWI
 
-XXX
+We use code from the R package [heatwaveR](https://robwschlegel.github.io/heatwaveR/), which calculates heatwave indices from oceanographic data after Hobday et al. (2016).
+The code used here is adapted from work from Anna Sulc.
+
+XYZ add detail.
+
+![Event with highest cumulative intensity in the hindcast period](event1.png)
+![Event with highest maximum intensity in the hindcast period](event2.png)
+
 
 ## Notes
 

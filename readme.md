@@ -88,32 +88,11 @@ The `process_annual_nc()` function performs the following steps:
 - Calculates daily means by NMFS area (or for the entire area)
 - Converts time steps to calendar dates
 
-## Usage
-
-### Subsetting daily files on loon
-```bash
-# Make sure hind_files.txt contains paths to your ROMS files
-bash pull_sst.sh
-```
-
-### Creating annual files on loon
-```bash
-bash create_annual_nc.sh
-```
-
-### Spatial matching and averaging within NMFS areas in R
-```r
-# In R
-source("annual_nc_functions.R")
-# Process annual netCDF files with a maximum depth of 1000m
-daily_sst_ls <- lapply(nc_files, process_annual_nc, maxdepth = 1000)
-```
-
-## Bias correction with delta method
+### Step 4: Bias correction with delta method
 
 To add when we do projections. What is the spatial and temporal scale at which the correction should occur?
 
-## Calculate MHWI
+### Step 5: Calculate MHWI
 
 We use code from the R package [heatwaveR](https://robwschlegel.github.io/heatwaveR/), which calculates heatwave indices from oceanographic data after Hobday et al. (2016).
 The code used here is adapted from work from Anna Sulc.

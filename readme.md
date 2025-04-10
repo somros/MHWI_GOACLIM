@@ -8,7 +8,7 @@ The approach leverages CDO for efficient processing of the NetCDF files on loon.
 
 The workflow includes:
 
-1. Subsetting daily ROMS NetCDF files to extract surface temperature across a subregion of the ROMS domain
+1. Subsetting daily ROMS NetCDF files to extract surface temperature across a subregion of the ROMS domain. Surface temperature is extracted as the temperature in the very first ROMS vertical layer in each cell.
 2. Aggregating daily data into annual files while handling duplicate and missing records
 3. Processing the annual files in R to perform spatial analysis by NMFS management areas
 4. Calculate the MHWI

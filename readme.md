@@ -118,7 +118,7 @@ To add when we do projections. What is the spatial and temporal scale at which t
 We use code from the R package [heatwaveR](https://robwschlegel.github.io/heatwaveR/), which calculates heatwave indices from oceanographic data after Hobday et al. (2016).
 The code used here is adapted from work from Anna Sulc.
 
-XYZ add detail.
+Handled in the `make_mhwi.R` script.
 
 ![All events in the hindcast period](p_ts.png)
 

@@ -56,6 +56,7 @@ mhw_summary_by_year <- mhw$event %>%
   arrange(year_start) 
 
 print(mhw_summary_by_year)
+saveRDS(mhw_summary_by_year, "output/goa_mhwi_nep10k_summary.RDS")
 
 #Check the results
 ggplot(mhw_summary_by_year, aes(x = year_start, y = total_intensity)) +

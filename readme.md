@@ -2,9 +2,9 @@
 
 ## Overview
 
-This repository contains scripts for processing ROMS NetCDF output files to create a marine heatwave index (MHWI) for the GOA. Most of the lifting is done to subset and parse the daily NetCDF files (all up we have ~120 TB worth of data).
+This repository contains scripts for processing ROMS NetCDF output files to create a marine heatwave index (MHWI) for the GOA. Most of the lifting is done to subset and parse the daily NetCDF files (all up we have ~120 TB worth of data hosted on loon).
 
-The approach leverages CDO for efficient processing of the nc files on loon.
+The approach leverages CDO for efficient processing of the NetCDF files on loon.
 
 The workflow includes:
 
@@ -60,7 +60,7 @@ This script:
 
 ### Step 2: Aggregate to Annual Files
 
-The script `combine_daily_to_annual.sh` processes the subset temperature files into annual compilations while handling issues like:
+The script `create_annual_nc.sh` processes the subset temperature files into annual compilations while handling issues like:
 - Merging daily records that may span multiple files
 - Indexing files by year to improve processing efficiency
 - Detecting and handling duplicate timestamps
@@ -71,7 +71,7 @@ This step creates standardized annual NetCDF files with daily time steps.
 
 ### Step 3: Spatial Analysis in R
 
-Now I moved the annual NetCDF files to my local for development, but it can (should) all be done on loon instead. We need to move to R here because spatial joining (e.g. clipping to NMFS areas) can't be done in CDO.
+Now I moved the annual NetCDF files to my local for development, but it can (should) all be done on loon instead. We need to move to R here because spatial joining (e.g. clipping to NMFS areas) can't be done in CDO (or if it can I don't know how).
 
 The R scripts provide functionality to:
 1. Load the ROMS grid information and transform coordinates
@@ -84,7 +84,7 @@ The `process_annual_nc()` function performs the following steps:
 - Extracts temperature data
 - Matches with ROMS grid coordinates
 - Filters out land cells and areas deeper than the specified maximum depth
-- Clips to specified NMFS areas (610, 620, 630 for Pcod)
+- Clips to specified NMFS areas (e.g., 610, 620, 630 for Pcod, other models will have different requirements)
 - Calculates daily means by NMFS area (or for the entire area)
 - Converts time steps to calendar dates
 
@@ -98,7 +98,7 @@ bash pull_sst.sh
 
 ### Creating annual files on loon
 ```bash
-bash combine_daily_to_annual.sh
+bash create_annual_nc.sh
 ```
 
 ### Spatial matching and averaging within NMFS areas in R

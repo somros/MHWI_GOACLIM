@@ -83,11 +83,19 @@ ggplot(mhw_summary_by_year, aes(x = year_start, y = mean_intensity)) +
 # I am unsure how to interpret these
 
 # these below seem more intuitive
-event1 <- event_line(mhw, spread = 180, metric = "intensity_cumulative") # cumulative intensity in 2016
-event1 <- event_line(mhw, spread = 180, metric = "intensity_max") # max intensity in 2015
+event1 <- event_line(mhw, spread = 150, metric = "intensity_cumulative") +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.background = element_rect(fill = "white")
+  ) # cumulative intensity in 2016
+event2 <- event_line(mhw, spread = 150, metric = "intensity_max") +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.background = element_rect(fill = "white")
+  ) # max intensity in 2015
 
 ggsave("event1.png", event1, width = 7, height = 4)
-ggsave("event2.png", event1, width = 7, height = 4)
+ggsave("event2.png", event2, width = 7, height = 4)
 
 ggplot(mhw$event, aes(x = date_start, y = intensity_max)) +
   geom_lolli(colour = "salmon", colour_n = "red", n = 3) +

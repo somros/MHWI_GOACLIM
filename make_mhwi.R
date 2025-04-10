@@ -11,12 +11,7 @@ library(doParallel)
 library(lubridate)
 
 # read data
-hindcast_sst <- readRDS(here::here("data","hindcast_nmfs_daily.RDS"))
-
-# for testing purposes, let's keep only area 620
-# TODO: get rid of this when we drop the NMFS areas
-hindcast_sst <- hindcast_sst %>%
-  filter(NMFS_AREA == 620)
+hindcast_sst <- readRDS(here::here("data","hindcast_daily.RDS"))
 
 # change date format
 hindcast_sst <- hindcast_sst %>%
@@ -83,23 +78,33 @@ ggplot(mhw_summary_by_year, aes(x = year_start, y = mean_intensity)) +
 # I am unsure how to interpret these
 
 # these below seem more intuitive
+p1 <- ggplot(mhw$event, aes(x = date_start, y = intensity_max)) +
+  geom_lolli(colour = "salmon", colour_n = "red", n = 3) + # top 3 events
+  labs(y = expression(paste("Max. intensity [", degree, "C]")), 
+       x = NULL,
+       title = "All events in the hindcast period")+
+  theme_bw() +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.background = element_rect(fill = "white")
+  )
+ggsave("p_ts.png", p1, width = 7, height = 4)
+
 event1 <- event_line(mhw, spread = 150, metric = "intensity_cumulative") +
   theme(
     panel.background = element_rect(fill = "white"),
     plot.background = element_rect(fill = "white")
-  ) # cumulative intensity in 2016
+  ) +
+  labs(title = "Event with highest cumulative intensity in the hindcast period")# cumulative intensity in 2016
 event2 <- event_line(mhw, spread = 150, metric = "intensity_max") +
   theme(
     panel.background = element_rect(fill = "white"),
     plot.background = element_rect(fill = "white")
-  ) # max intensity in 2015
+  ) +
+  labs(title = "Event with highest maximum intensity in the hindcast period") # max intensity in 2015
 
 ggsave("event1.png", event1, width = 7, height = 4)
 ggsave("event2.png", event2, width = 7, height = 4)
-
-ggplot(mhw$event, aes(x = date_start, y = intensity_max)) +
-  geom_lolli(colour = "salmon", colour_n = "red", n = 3) +
-   labs(y = expression(paste("Max. intensity [", degree, "C]")), x = NULL)
 
 
 # # For data with NMFS areas

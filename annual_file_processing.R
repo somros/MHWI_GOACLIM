@@ -55,19 +55,19 @@ mask <- mask %>% filter(NMFS_AREA %in% c(610,620,630,640,650))%>% # subset to 61
   select(NMFS_AREA, AREA)  %>%# area here seems to be in m2
   st_transform(crs = 4326)
 
-# ##################################
-# # DO NOT RUN
-# # run function over all nc files and save objects into a list
-# daily_sst_ls <- lapply(nc_files, process_annual_nc, maxdepth = 1000)
-# 
-# # merge into one data frame
-# daily_sst <- daily_sst_ls %>% bind_rows()
-# 
-# # view
-# daily_sst %>%
-#   ggplot(aes(x = date, y = temp, color = factor(NMFS_AREA)))+
-#   geom_line()
-# 
-# # save as RDS file
-# saveRDS(daily_sst, "data/hindcast_nmfs_daily.RDS")
+##################################
+# DO NOT RUN
+# run function over all nc files and save objects into a list
+daily_sst_ls <- lapply(nc_files, process_annual_nc, maxdepth = 1000)
+
+# merge into one data frame
+daily_sst <- daily_sst_ls %>% bind_rows()
+
+# view
+daily_sst %>%
+  ggplot(aes(x = date, y = temp))+
+  geom_line()
+
+# save as RDS file
+saveRDS(daily_sst, "data/hindcast_daily.RDS")
 ##################################

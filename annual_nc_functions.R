@@ -90,7 +90,8 @@ process_annual_nc <- function(ncfile, maxdepth) {
   
   # Average by day and NMFS area
   temp_day <- temp_nmfs %>%
-    group_by(ocean_time, NMFS_AREA) %>%
+    #group_by(ocean_time, NMFS_AREA) %>%
+    group_by(ocean_time) %>%
     summarise(temp = mean(temp), .groups = "drop")
   
   # Handle time steps

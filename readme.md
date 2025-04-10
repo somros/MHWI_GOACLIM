@@ -120,9 +120,11 @@ The code used here is adapted from work from Anna Sulc.
 
 XYZ add detail.
 
-![Event with highest cumulative intensity in the hindcast period](event1.png)
-![Event with highest maximum intensity in the hindcast period](event2.png)
+![All events in the hindcast period](p_ts.png)
 
+![Event with highest cumulative intensity in the hindcast period](event1.png)
+
+![Event with highest maximum intensity in the hindcast period](event2.png)
 
 ## Notes
 
